@@ -2,8 +2,8 @@
   "type": "component",
   "metadata": {},
   "schema": {
-    "name": "csv-import",
-    "friendlyName": "CSV Import",
+    "name": "csv-import-JTS",
+    "friendlyName": "JTS - CSV Import",
     "description": "Allows your end users to import a CSV and post the results to a table",
     "icon": "FileData",
     "hasChildren": true,
