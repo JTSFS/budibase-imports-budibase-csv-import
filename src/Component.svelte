@@ -3,9 +3,9 @@
   // how do i stop the import happing in preview - can i detect preview
   // API is not documented
   // documentation on how to trigger a defineActions?
+  import Papa from "papaparse";
   import { getContext } from "svelte";
   import Dropzone from "svelte-file-dropzone";
-  import Papa from "papaparse";
 
   export let table;
   export let importText="Import";
@@ -58,6 +58,7 @@
 
   async function importData() {
     isImporting = true;
+    const urlId = getUrlIdFromPage();
     for (let row of data) {
       // do not import in builder mode
       if (!$builderStore.inBuilder) {
@@ -78,6 +79,14 @@
     isImporting = false;
     isImported = true;
     onImport();
+  }
+
+  // Function to get the ID from the URL
+  function getUrlIdFromPage() {
+    const url = window.location.href;
+    // Assuming the ID is the last segment of the URL
+    const segments = url.split('/');
+    return segments[segments.length - 1];
   }
 
   function reset() {
