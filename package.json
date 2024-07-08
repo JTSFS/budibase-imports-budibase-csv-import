@@ -1,13 +1,13 @@
 {
   "name": "csv-import-JTS",
-  "version": "1.0.0",
+  "version": "1.0.4",
   "description": "Allows your end users to import a CSV and post the results to a table or custom query",
   "license": "MIT",
   "svelte": "index.js",
   "module": "dist/plugin.min.js",
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -cw"
+    "build": "node_modules/.bin/rollup -c",
+    "watch": "node_modules/.bin/rollup -cw"
   },
   "dependencies": {
     "@crownframework/svelte-error-boundary": "^1.0.3",

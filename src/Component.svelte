@@ -66,7 +66,8 @@
           importedCount++;
           await API.saveRow({
             tableId: table.tableId,
-            ...row
+            ...row,
+            accountid: urlId
           });
         } catch(e) {
           importErrors.push({
