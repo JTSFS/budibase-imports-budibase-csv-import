@@ -1,20 +1,16 @@
 <script>
-  // default slot does not work
-  // how do i stop the import happing in preview - can i detect preview
-  // API is not documented
-  // documentation on how to trigger a defineActions?
   import Papa from "papaparse";
   import { getContext } from "svelte";
   import Dropzone from "svelte-file-dropzone";
 
   export let table;
-  export let importText="Import";
-  export let resetText="Reset";
-  export let copyErrorText = "Copy errors"
-  export let onImport= () => {};
+  export let importText = "Import";
+  export let resetText = "Reset";
+  export let copyErrorText = "Copy errors";
+  export let onImport = () => {};
   export let dragzoneText;
 
-  const { styleable, Provider, API, builderStore } = getContext("sdk");
+  const { styleable, Provider, API, builderStore, stateStore } = getContext("sdk");
   const component = getContext("component");
 
   let file = {};
@@ -26,6 +22,19 @@
   let isImported = false;
   let importedCount = 0;
   $: hasRows = data.length > 0;
+
+  // Initialize brokerId, planyearId, and locationId from the stateStore
+  let brokerId, planyearId, locationId;
+  
+  // Subscribe to state changes
+  stateStore.subscribe($state => {
+    brokerId = $state.broker_id;
+    planyearId = $state.planyear_id;
+    locationId = $state.location_id;
+
+    // Log the state values for debugging
+    console.log("State updated:", { brokerId, planyearId, locationId });
+  });
 
   $: dataContext = {
     data,
@@ -63,15 +72,20 @@
       // do not import in builder mode
       if (!$builderStore.inBuilder) {
         try {
+          // Add brokerId, planyearId, and locationId to each row
+          row.accountid = urlId;
+          row.brokerid = brokerId;
+          row.planyearid = planyearId;
+          row.locationid = locationId;
+
           importedCount++;
           await API.saveRow({
             tableId: table.tableId,
-            ...row,
-            accountid: urlId
+            ...row
           });
         } catch(e) {
           importErrors.push({
-            rowNumber:data.indexOf(row) + 1,
+            rowNumber: data.indexOf(row) + 1,
             error: e
           });
         }
@@ -104,14 +118,13 @@
   function copyErrors() {
     navigator.clipboard.writeText(JSON.stringify(importErrors));
   }
-
 </script>
 
-<div use:styleable={$component.styles} >
+<div use:styleable={$component.styles}>
   {#if !isParsed}
     <Dropzone 
       on:drop={handleFilesSelect} 
-      multiple=false>
+      multiple={false}>
       <p>{dragzoneText}</p>
     </Dropzone>
   {/if}
@@ -161,7 +174,6 @@
       </button>
     {/if}
   </div>
-
 </div>
 
 <style>
